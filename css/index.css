@@ -5768,6 +5768,8 @@ h1 {
   width: 216px;
   position: absolute;
   background-size: 100%;
+  transition-duration: 1s;
+  transition-property: left;
 }
 .cards-wrapper .card.hearts-1 {
   background-image: url("../assets/cards/hearts-1.svg");

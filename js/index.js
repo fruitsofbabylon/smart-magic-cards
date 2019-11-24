@@ -1,22 +1,26 @@
-const suit = 'hearts';
+const suits = ['hearts', 'spades', 'diamonds', 'clubs'];
 const cardsWrapper = document.querySelector('.cards-wrapper');
+const buttonsWrapper = document.querySelector('.btn-wrapper');
 
 function createCards() {
   const cards = [];
   // Create an array with objects containing the value and the suit of each card
-  for (let i = 1; i <= 13; i += 1) {
-    const cardObject = {
-      value: i,
-      suit,
-    };
-    cards.push(cardObject);
-  }
+  suits.forEach((suit, suitIndex) => {
+    for (let i = 1; i <= 13; i += 1) {
+      const cardObject = {
+        value: i,
+        suit,
+        index: i + suitIndex * 13,
+      };
+      cards.push(cardObject);
+    }
+  });
 
   // For each dataObject, create a new card and append it to the DOM
   cards.forEach((card, i) => {
-    const positionFromLeft = i * 15;
+    const positionFromLeft = i * 30;
     const cardElement = document.createElement('div');
-    cardElement.setAttribute('data-value', card.value);
+    cardElement.setAttribute('data-value', card.index);
     cardElement.classList.add('card', `${card.suit}-${card.value}`);
     cardElement.style.left = `${positionFromLeft}px`;
     cardsWrapper.append(cardElement);
@@ -25,7 +29,91 @@ function createCards() {
 
 // Function to clear out the initial button and create new buttons to play the game.
 function createButtons() {
-  // Your Code
+  const startButton = document.getElementById('start-game');
+  buttonsWrapper.removeChild(startButton);
+
+  const mixButton = document.createElement('button');
+  mixButton.addEventListener('click', startMixCards);
+  mixButton.textContent = 'Shuffle';
+  mixButton.className = 'btn btn-lg btn-secondary';
+  buttonsWrapper.appendChild(mixButton);
+
+  const showHideButton = document.createElement('button');
+  showHideButton.addEventListener('click', showHide);
+  showHideButton.textContent = 'Show/Hide';
+  showHideButton.className = 'btn btn-lg btn-secondary ml-3';
+  buttonsWrapper.appendChild(showHideButton);
+
+  const magicButton = document.createElement('button');
+  magicButton.addEventListener('click', startMagic);
+  magicButton.textContent = 'Magic';
+  magicButton.className = 'btn btn-lg btn-secondary ml-3';
+  buttonsWrapper.appendChild(magicButton);
+}
+
+function showHide() {
+  cardsWrapper.classList.toggle('hidden');
+}
+
+function startMixCards() {
+  const cards = Array.from(cardsWrapper.children);
+  const lastCard = cards[cards.length - 1];
+  cards.forEach((card) => card.style.left = '0px');
+  lastCard.addEventListener('transitionend', finishMixCards);
+} 
+
+function shuffle(array) {
+  for(let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    const temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+}
+
+function finishMixCards() {
+  const cards = Array.from(cardsWrapper.children);
+  const lastCard = cards[cards.length - 1];
+  lastCard.removeEventListener('transitionend', finishMixCards);
+
+  const cardsData = cards.map((card) => { 
+    return { name: card.className, dataValue: card.getAttribute('data-value')};
+  });
+  shuffle(cardsData);
+  cardsData.forEach((data, i) => {
+    const card = cardsWrapper.children[i];
+    const positionFromLeft = i * 30;
+    card.style.left = `${positionFromLeft}px`;
+    card.className = data.name;
+    card.setAttribute('data-value', data.dataValue);
+  });
+}
+
+function startMagic() {
+  const cards = Array.from(cardsWrapper.children);
+  const lastCard = cards[cards.length - 1];
+  cards.forEach((card) => card.style.left = '0px');
+  lastCard.addEventListener('transitionend', finishMagic);
+}
+
+function finishMagic() {
+  const cards = Array.from(cardsWrapper.children);
+  const lastCard = cards[cards.length - 1];
+  lastCard.removeEventListener('transitionend', finishMixCards);
+
+  const cardsData = cards.map((card) => { 
+    return { name: card.className, dataValue: parseInt(card.getAttribute('data-value'))};
+  });
+  cardsData.sort((a, b) => { 
+    return a.dataValue - b.dataValue;
+  });
+  cardsData.forEach((data, i) => {
+    const card = cardsWrapper.children[i];
+    const positionFromLeft = i * 30;
+    card.style.left = `${positionFromLeft}px`;
+    card.className = data.name;
+    card.setAttribute('data-value', data.dataValue);
+  });
 }
 
 // Function to start the game by clearing the wrapper, creating

@@ -10,6 +10,8 @@
     width: $card-width;
     position: absolute;
     background-size: 100%;
+    transition-duration: 1s;
+    transition-property: left;
 
     &.hearts-1 {
       background-image: url("../assets/cards/hearts-1.svg");
