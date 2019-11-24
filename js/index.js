@@ -48,11 +48,36 @@ function showHide() {
   cardsWrapper.classList.toggle('hidden');
 }
 
-function startMixCards() {
+function startTransition(finishTransition) {
   const cards = Array.from(cardsWrapper.children);
   const lastCard = cards[cards.length - 1];
   cards.forEach((card) => card.style.left = '0px');
-  lastCard.addEventListener('transitionend', finishMixCards);
+  lastCard.addEventListener('transitionend', finishTransition);
+}
+
+function finishTransition(listener, reorder) {
+  const cards = Array.from(cardsWrapper.children);
+  const lastCard = cards[cards.length - 1];
+  lastCard.removeEventListener('transitionend', listener);
+
+  const cardsData = cards.map((card) => { 
+    return { 
+      name: card.className,
+      dataValue: parseInt(card.getAttribute('data-value'))
+    };
+  });
+  reorder(cardsData);
+  cardsData.forEach((data, i) => {
+    const card = cardsWrapper.children[i];
+    const positionFromLeft = i * 30;
+    card.style.left = `${positionFromLeft}px`;
+    card.className = data.name;
+    card.setAttribute('data-value', data.dataValue);
+  });
+}
+
+function startMixCards() {
+  startTransition(finishMixCards);
 } 
 
 function shuffle(array) {
@@ -65,47 +90,18 @@ function shuffle(array) {
 }
 
 function finishMixCards() {
-  const cards = Array.from(cardsWrapper.children);
-  const lastCard = cards[cards.length - 1];
-  lastCard.removeEventListener('transitionend', finishMixCards);
-
-  const cardsData = cards.map((card) => { 
-    return { name: card.className, dataValue: card.getAttribute('data-value')};
-  });
-  shuffle(cardsData);
-  cardsData.forEach((data, i) => {
-    const card = cardsWrapper.children[i];
-    const positionFromLeft = i * 30;
-    card.style.left = `${positionFromLeft}px`;
-    card.className = data.name;
-    card.setAttribute('data-value', data.dataValue);
-  });
+  finishTransition(finishMixCards, shuffle);
 }
 
 function startMagic() {
-  const cards = Array.from(cardsWrapper.children);
-  const lastCard = cards[cards.length - 1];
-  cards.forEach((card) => card.style.left = '0px');
-  lastCard.addEventListener('transitionend', finishMagic);
+  startTransition(finishMagic);
 }
 
 function finishMagic() {
-  const cards = Array.from(cardsWrapper.children);
-  const lastCard = cards[cards.length - 1];
-  lastCard.removeEventListener('transitionend', finishMixCards);
-
-  const cardsData = cards.map((card) => { 
-    return { name: card.className, dataValue: parseInt(card.getAttribute('data-value'))};
-  });
-  cardsData.sort((a, b) => { 
-    return a.dataValue - b.dataValue;
-  });
-  cardsData.forEach((data, i) => {
-    const card = cardsWrapper.children[i];
-    const positionFromLeft = i * 30;
-    card.style.left = `${positionFromLeft}px`;
-    card.className = data.name;
-    card.setAttribute('data-value', data.dataValue);
+  finishTransition(finishMagic, (cardsData) => {
+    cardsData.sort((a, b) => { 
+      return a.dataValue - b.dataValue;
+    });
   });
 }
 
