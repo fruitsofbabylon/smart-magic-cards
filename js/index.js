@@ -31,24 +31,17 @@ function createCards() {
 function createButtons() {
   const startButton = document.getElementById('start-game');
   buttonsWrapper.removeChild(startButton);
+  addButton('Shuffle', startMixCards);
+  addButton('Show/Hide', showHide);
+  addButton('Magic', startMagic);
+}
 
-  const mixButton = document.createElement('button');
-  mixButton.addEventListener('click', startMixCards);
-  mixButton.textContent = 'Shuffle';
-  mixButton.className = 'btn btn-lg btn-secondary';
-  buttonsWrapper.appendChild(mixButton);
-
-  const showHideButton = document.createElement('button');
-  showHideButton.addEventListener('click', showHide);
-  showHideButton.textContent = 'Show/Hide';
-  showHideButton.className = 'btn btn-lg btn-secondary ml-3';
-  buttonsWrapper.appendChild(showHideButton);
-
-  const magicButton = document.createElement('button');
-  magicButton.addEventListener('click', startMagic);
-  magicButton.textContent = 'Magic';
-  magicButton.className = 'btn btn-lg btn-secondary ml-3';
-  buttonsWrapper.appendChild(magicButton);
+function addButton(text, action) {
+  const button = document.createElement('button');
+  button.addEventListener('click', action);
+  button.textContent = text;
+  button.className = 'btn btn-lg btn-secondary ml-3';
+  buttonsWrapper.appendChild(button);
 }
 
 function showHide() {
