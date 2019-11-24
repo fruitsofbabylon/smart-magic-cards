@@ -35,10 +35,6 @@ function addButton(text, action) {
   buttonsWrapper.appendChild(button);
 }
 
-function showHide() {
-  cardsWrapper.classList.toggle('hidden');
-}
-
 function startTransition(finishListener) {
   const cards = Array.from(cardsWrapper.children);
   const lastCard = cards[cards.length - 1];
@@ -92,6 +88,10 @@ function finishMagic() {
 
 function startMagic() {
   startTransition(finishMagic);
+}
+
+function showHide() {
+  cardsWrapper.classList.toggle('hidden');
 }
 
 // Function to clear out the initial button and create new buttons to play the game.
