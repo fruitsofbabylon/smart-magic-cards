@@ -17,13 +17,14 @@ describe('Play game', () => {
     suits.forEach((suit) => {
       cy.get(`[class*="${suit}-"]`).should('have.length', 13);
     });
+    cy.wait(1500);
     cy.get('.card').then((cards) => {
       const allCardClasses = [...cards].map((card) => card.classList[1]);
       expect(allCardClasses).to.deep.equal(sortedCardsClasses);
     });
 
     cy.contains('Shuffle').click();
-    cy.wait(1000);
+    cy.wait(1500);
     cy.get('.card').then((cards) => {
       const allCardClasses = [...cards].map((card) => card.classList[1]);
       expect(allCardClasses).to.not.deep.equal(sortedCardsClasses);
@@ -36,7 +37,40 @@ describe('Play game', () => {
     cy.get('.cards-wrapper').should('not.have.class', 'hidden');
 
     cy.contains('Magic').click();
-    cy.wait(1000);
+    cy.wait(1500);
+    cy.get('.card').then((cards) => {
+      const allCardClasses = [...cards].map((card) => card.classList[1]);
+      expect(allCardClasses).to.deep.equal(sortedCardsClasses);
+    });
+  });
+
+  it('Shuffles twice', () => {
+    cy.visit('./index.html');
+    cy.get('#start-game').click();
+
+    cy.contains('Shuffle').click();
+
+    let firstAttemptCards = [];
+    cy.wait(1500);
+    cy.get('.card').then((cards) => {
+      firstAttemptCards = [...cards].map((card) => card.classList[1]);
+    });
+
+    cy.contains('Shuffle').click();
+    cy.wait(1500);
+    cy.get('.card').then((cards) => {
+      const allCardClasses = [...cards].map((card) => card.classList[1]);
+      expect(allCardClasses).to.not.deep.equal(firstAttemptCards);
+    });
+  });
+
+  it('Remains sorted when clicking Magic', () => {
+    cy.visit('./index.html');
+    cy.get('#start-game').click();
+
+    cy.contains('Magic').click();
+
+    cy.wait(1500);
     cy.get('.card').then((cards) => {
       const allCardClasses = [...cards].map((card) => card.classList[1]);
       expect(allCardClasses).to.deep.equal(sortedCardsClasses);
