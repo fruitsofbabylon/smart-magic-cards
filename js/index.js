@@ -27,15 +27,6 @@ function createCards() {
   });
 }
 
-// Function to clear out the initial button and create new buttons to play the game.
-function createButtons() {
-  const startButton = document.getElementById('start-game');
-  buttonsWrapper.removeChild(startButton);
-  addButton('Shuffle', startMixCards);
-  addButton('Show/Hide', showHide);
-  addButton('Magic', startMagic);
-}
-
 function addButton(text, action) {
   const button = document.createElement('button');
   button.addEventListener('click', action);
@@ -48,11 +39,11 @@ function showHide() {
   cardsWrapper.classList.toggle('hidden');
 }
 
-function startTransition(finishTransition) {
+function startTransition(finishListener) {
   const cards = Array.from(cardsWrapper.children);
   const lastCard = cards[cards.length - 1];
-  cards.forEach((card) => card.style.left = '0px');
-  lastCard.addEventListener('transitionend', finishTransition);
+  cards.forEach((card) => { card.style.left = '0px'; });
+  lastCard.addEventListener('transitionend', finishListener);
 }
 
 function finishTransition(listener, reorder) {
@@ -60,12 +51,12 @@ function finishTransition(listener, reorder) {
   const lastCard = cards[cards.length - 1];
   lastCard.removeEventListener('transitionend', listener);
 
-  const cardsData = cards.map((card) => { 
-    return { 
+  const cardsData = cards.map((card) => (
+    {
       name: card.className,
-      dataValue: parseInt(card.getAttribute('data-value'))
-    };
-  });
+      dataValue: parseInt(card.getAttribute('data-value'), 10),
+    }
+  ));
   reorder(cardsData);
   cardsData.forEach((data, i) => {
     const card = cardsWrapper.children[i];
@@ -76,16 +67,12 @@ function finishTransition(listener, reorder) {
   });
 }
 
-function startMixCards() {
-  startTransition(finishMixCards);
-} 
-
 function shuffle(array) {
-  for(let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * i)
-    const temp = array[i]
-    array[i] = array[j]
-    array[j] = temp
+  for (let i = array.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * i);
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
 }
 
@@ -93,16 +80,27 @@ function finishMixCards() {
   finishTransition(finishMixCards, shuffle);
 }
 
-function startMagic() {
-  startTransition(finishMagic);
+function startMixCards() {
+  startTransition(finishMixCards);
 }
 
 function finishMagic() {
   finishTransition(finishMagic, (cardsData) => {
-    cardsData.sort((a, b) => { 
-      return a.dataValue - b.dataValue;
-    });
+    cardsData.sort((a, b) => a.dataValue - b.dataValue);
   });
+}
+
+function startMagic() {
+  startTransition(finishMagic);
+}
+
+// Function to clear out the initial button and create new buttons to play the game.
+function createButtons() {
+  const startButton = document.getElementById('start-game');
+  buttonsWrapper.removeChild(startButton);
+  addButton('Shuffle', startMixCards);
+  addButton('Show/Hide', showHide);
+  addButton('Magic', startMagic);
 }
 
 // Function to start the game by clearing the wrapper, creating
