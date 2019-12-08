@@ -44,6 +44,7 @@ describe('Play game', () => {
     });
   });
 
+  //test to make sure it is possible to shuffle cards several times in a row with different output each time
   it('Shuffles twice', () => {
     cy.visit('./index.html');
     cy.get('#start-game').click();
@@ -64,6 +65,7 @@ describe('Play game', () => {
     });
   });
 
+  //test to make sure the cards are still sorted after Magic button was clicked several times in a row
   it('Remains sorted when clicking Magic', () => {
     cy.visit('./index.html');
     cy.get('#start-game').click();
