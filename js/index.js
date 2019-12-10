@@ -19,9 +19,11 @@ function createCards() {
 
   // For each dataObject, create a new card and append it to the DOM
   cards.forEach((card, i) => {
-    const positionFromLeft = i * 30; //change 15 to 30 so each card suit can be seen (make spacing between cards wider)
+    // change 15 to 30 so each card suit can be seen (make spacing between cards wider)
+    const positionFromLeft = i * 30;
     const cardElement = document.createElement('div');
-    cardElement.setAttribute('data-value', card.index); // change card.value to card.index so card can be ordered or shuffled based on index
+    // change card.value to card.index so card can be ordered or shuffled based on index
+    cardElement.setAttribute('data-value', card.index);
     cardElement.classList.add('card', `${card.suit}-${card.value}`);
     cardElement.style.left = `${positionFromLeft}px`;
     cardsWrapper.append(cardElement);
@@ -36,41 +38,49 @@ function addButton(text, action) {
   button.addEventListener('click', action);
   button.textContent = text;
   button.className = 'btn btn-lg btn-secondary ml-3'; // bootstrap styling
-  buttonsWrapper.appendChild(button); // add button as a last child element to the buttonsWrapper component
+  // add button as a last child element to the buttonsWrapper component
+  buttonsWrapper.appendChild(button);
 }
 
-//start cards folding animation 
+// start cards folding animation
 function startTransition(finishListener) {
   const cards = Array.from(cardsWrapper.children); // create array of all cards
   const lastCard = cards[cards.length - 1];
-  cards.forEach((card) => { card.style.left = '0px'; }); // move all cards to the right of the screen
-  lastCard.addEventListener('transitionend', finishListener); // apend event listener to call the function when event has happened
+  // move all cards to the right of the screen
+  cards.forEach((card) => { card.style.left = '0px'; });
+  // apend event listener to call the function when event has happened
+  lastCard.addEventListener('transitionend', finishListener);
 }
 
-//function to mix cards and unfold them back in the line
+// function to mix cards and unfold them back in the line
 function finishTransition(listener, reorder) {
-  const cards = Array.from(cardsWrapper.children); 
+  const cards = Array.from(cardsWrapper.children);
   const lastCard = cards[cards.length - 1];
-  lastCard.removeEventListener('transitionend', listener); //stop cards from endlessly shuffling
+  // stop cards from endlessly shuffling
+  lastCard.removeEventListener('transitionend', listener);
 
   // create array of objects each for one specific card with name and value(index) info
-  const cardsData = cards.map((card) => ( 
+  const cardsData = cards.map((card) => (
     {
       name: card.className,
       dataValue: parseInt(card.getAttribute('data-value'), 10), // string to integer
     }
   ));
-  reorder(cardsData); //placeholder for shuffle/sort elements of cardsData
+  reorder(cardsData); // placeholder for shuffle/sort elements of cardsData
   cardsData.forEach((data, i) => {
     const card = cardsWrapper.children[i];
     const positionFromLeft = i * 30;
-    card.style.left = `${positionFromLeft}px`; // move cards to the right sight of screen animation - unfold them in line
-    card.className = data.name; // apply shuffled/sorted cardsData object's name to the className (so it can be displayed on the screen)
-    card.setAttribute('data-value', data.dataValue); // apply shuffled cardsData object's dataValue so it could be sorted back with Magic
+    // move cards to the right sight of screen animation - unfold them in line
+    card.style.left = `${positionFromLeft}px`;
+    // apply shuffled/sorted cardsData object's name to the className
+    // (so it can be displayed on the screen)
+    card.className = data.name;
+    // apply shuffled cardsData object's dataValue so it could be sorted back with Magic
+    card.setAttribute('data-value', data.dataValue);
   });
 }
 
-// shuffle cards function 
+// shuffle cards function
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * i);
@@ -80,20 +90,22 @@ function shuffle(array) {
   }
 }
 
-//second part of cards shuffle process
+// second part of cards shuffle process
 function finishMixCards() {
   finishTransition(finishMixCards, shuffle);
 }
 
-//first part of cards shuffle process
+// first part of cards shuffle process
 function startMixCards() {
   startTransition(finishMixCards);
 }
 
-//second part of cards sorting process
+// second part of cards sorting process
 function finishMagic() {
   finishTransition(finishMagic, (cardsData) => {
-    cardsData.sort((a, b) => a.dataValue - b.dataValue); // sort all of the cards in order from min to max based on the data value - their individual number
+    // sort all of the cards in order from min to max
+    // based on the data value - their individual number
+    cardsData.sort((a, b) => a.dataValue - b.dataValue);
   });
 }
 
@@ -102,7 +114,7 @@ function startMagic() {
   startTransition(finishMagic);
 }
 
-//function to hide/show cards contents
+// function to hide/show cards contents
 function showHide() {
   cardsWrapper.classList.toggle('hidden');
 }
